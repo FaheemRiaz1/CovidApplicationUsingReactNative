@@ -29,11 +29,9 @@ function HomeScreen({ navigation }) {
   }, []);
 
   const getDataofWorld = () => {
-    return fetch("https://world-population.p.rapidapi.com/worldpopulation", {
-        "method": "GET",
-        "headers": {
-          "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
-          "x-rapidapi-host": "world-population.p.rapidapi.com"
+    return fetch(
+      // ENTER YOUR API KEY HERE//
+      
         }
       })
       .then((response) => response.json())
@@ -46,11 +44,7 @@ function HomeScreen({ navigation }) {
   };
 
   const getTotalData = () => {
-    return fetch('https://covid-19-data.p.rapidapi.com/totals', {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '732a2643d3mshf3d16ace3a873aap16b12ajsn3c1d74acfcff',
-        'x-rapidapi-host': 'covid-19-data.p.rapidapi.com',
+    return fetch(// ENTER YOUR API KEY HERE//
       },
     })
       .then((response) => response.json())
@@ -113,11 +107,7 @@ function Searching({ navigation,route }) {
   }, []);
  
 const getTotalData = () => {
-    return fetch("https://world-population.p.rapidapi.com/allcountriesname", {
-        "method": "GET",
-        "headers": {
-          "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
-          "x-rapidapi-host": "world-population.p.rapidapi.com"
+    return fetch(// ENTER YOUR API KEY HERE//
         }
     })
       .then((response) => response.json())
@@ -240,11 +230,7 @@ function Statistics({navigation,route}){
   }, []);
 
   const getTotalData = () => {
-    return fetch("https://covid-19-data.p.rapidapi.com/country?name="+name, {
-          "method": "GET",
-          "headers": {
-            "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
-            "x-rapidapi-host": "covid-19-data.p.rapidapi.com"
+    return fetch(// ENTER YOUR API KEY HERE//
           }
       })
       .then((response) => response.json())
@@ -258,11 +244,7 @@ function Statistics({navigation,route}){
       });
   };
    const getPopofCountry = () => {
-    return fetch("https://world-population.p.rapidapi.com/population?country_name="+name, {
-          "method": "GET",
-          "headers": {
-            "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
-            "x-rapidapi-host": "world-population.p.rapidapi.com"
+    return fetch(// ENTER YOUR API KEY HERE//
           }
     })
       .then((response) => response.json())
