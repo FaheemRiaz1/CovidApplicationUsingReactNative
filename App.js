@@ -1,212 +1,389 @@
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { DataTable } from 'react-native-paper';
 
-class App2 extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      num: 0,
-    };
-  }
-  render() {
-    return (
-      <View style={{ paddingTop: 100 }}>
-        <Text style={styles.heading}>Class Based Component</Text>
-      </View>
-    );
+import {
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+  Keyboard,
+  Button,
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+
+function HomeScreen({ navigation }) {
+  const [getdataSource, setdataSource] = useState(null);
+  const [getTotalPop,setTotalPop]=useState(null);
+  var date = new Date().getDate();
+  useEffect(() => {
+     getTotalData();
+     
+  }, []);
+  useEffect(() => {
+    getDataofWorld(); 
+  }, []);
+
+  const getDataofWorld = () => {
+    return fetch("https://world-population.p.rapidapi.com/worldpopulation", {
+        "method": "GET",
+        "headers": {
+          "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
+          "x-rapidapi-host": "world-population.p.rapidapi.com"
+        }
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+         setTotalPop(responseJson.body.world_population); 
+      })
+      .catch((err) => {
+        console.error(err);  
+      });
+  };
+
+  const getTotalData = () => {
+    return fetch('https://covid-19-data.p.rapidapi.com/totals', {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': '732a2643d3mshf3d16ace3a873aap16b12ajsn3c1d74acfcff',
+        'x-rapidapi-host': 'covid-19-data.p.rapidapi.com',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setdataSource(responseJson);
+      })
+      .catch((err) => {
+        console.error(err);    
+      });
+  };
+  const counter = ()=>{
+  for(var i=0;i<getTotalPop;i++){
+    setTotalPop(i)
   }
 }
-export default function App() {
-   
-   const [getsolution,setSolution] = useState('') ;
-   const [getugn, setugnn]=useState(Math.floor(Math.random()*100));
-   const [getsgn,setsgn]=useState('');
-   const [getresult,setresult]=useState('');
-   const [gethint1,sethint1]=useState('');
-   const [getscore,setscore]=useState(0);
-   const [getturn,setturn]=useState(0);                    
-   const GAME_START_MESSAGE = 'Guess a Number';
-               
-   const [getNum, setNum] = useState(GAME_START_MESSAGE);
-
-   const numClick = (e) => {
-    if (getNum === 0) setNum(e);
-    else setNum(getNum + '' + e);
-  };
+  return (
+    <View style={styles.maindiv}>
     
- const onClick = button => {
-        var z= getugn
-        if(getturn===5){
-            sethint1("You lost the game"),
-            setresult(z)   
-        }
-        else if(button === "CE"){
-          backspace()
-        }//NOW IF I CLICK CE BUTTON IT WILL DELETE VERY LAST DIGIT NUMBER   
-       
-        else if(button === "reset"){
-         // reset()
-        }//NOW IF I CLICK C BUTTON IT WILL RESET EVERYTHING
-         else if(button === "="){
-           calculate()
-           //TASK#01
-           var c=1;
-           c=getturn+1
-           setturn(c)         
-        }//NOW IF I CLICK = BUTTON THE RESULT WILL BE DISPLAYED 
-        else if(button === "h"){
-          hint1()
-        }    
-        else {
-            setSolution(getsolution+button)               
-         }//THIS IS EVENT LISTNER FOR EVERYOTHER BUTTON e.g 1, 2, 3, 4, 5,... etc
-      };
-      function hint1(){
-        var ugn=getugn;
-        var h=getugn;
-        var h1=h;
-        if(h<100){
-            h=h%5;
-            h+=2;
-            h-=2;
-            h+=ugn;
-            h1=h;
-            h1=ugn-5;
-            var z ="Range is "+h1+" and "+h
-            sethint1(z);
-            setscore(getscore-2);
-        }
-      }   
-      //THIS ARROW FUNCTION WILL BE INVOLVE IN CALCULATING CORRECT RESULTS
-     const calculate = () => {
-        console.log(getugn)
-        var sgn=getsolution;
-        var ugn=getugn;
-        console.log(ugn,sgn)
-        var s=getscore
-        if(ugn==sgn){
-          setresult("Correct. !!")
-          setscore(getscore+5)
-          setturn(getturn+5)
-          setSolution("")
-          setugnn(Math.floor(Math.random()*100))
-        }
-        else{
-          setresult("Wrong Guess");
-          setSolution("");
-        }
-      };
-      const backspace=()=>{
-             setSolution(getsolution.slice(0, -1))
-      }
-      const buttonClick=(e)=>{
-        e.preventDefault();
-        this.setState({button:e.target.name, countClick:this.state.countClick+1});
-      }    
-      //THIS WILL SET THE STATE OF THE INPUT TEXT TO EMPTY STRING
-      //TASK#03
-     const  reset = () => {
-       setSolution("");
-       sethint1("");
-       setresult("");
-       setscore(0);
-       setsgn(0);
-       setugnn(Math.floor(Math.random()*100));
-       setturn(0);
-      };
-      const Finish=() =>{
-        setNum(GAME_START_MESSAGE);
-        reset();
-      }
-      const PlayAgain =() =>{
-        setNum(0);
-        reset();
-      }
-  const message = (
-    <View>
-      <Text style={{ textAlign: 'center', fontSize: 20 }}>Welcome to Number Guessing Game</Text>
-      <Button title="Start Game" onPress={() => setNum(0)} />
+    <TouchableOpacity style={styles.h1o}>
+    <Text style={styles.h1}>World Stats</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+      {getdataSource && <Text style={styles.text}>Confirmed: {parseFloat((getdataSource[0].confirmed/getTotalPop)*100).toFixed(3)}%</Text>}
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+       {getdataSource && <Text style={styles.text}>Recovered: {parseFloat((getdataSource[0].recovered/getTotalPop)*100).toFixed(3)}%</Text>}    
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+       {getdataSource && <Text style={styles.text}>Critical: {parseFloat((getdataSource[0].critical/getTotalPop)*100).toFixed(7)}%</Text>}
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+        {getdataSource && <Text style={styles.text}>Deaths: {parseFloat((getdataSource[0].deaths/getTotalPop)*100).toFixed(3)}%</Text>}
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+        {getdataSource && <Text style={styles.text}>Last Updated: {date-(JSON.stringify(getdataSource[0].lastUpdate).substring(9,11))} days ago</Text>}
+    </TouchableOpacity>
     </View>
   );
-  const end = (
-    <View>
-    <Text style={{ textAlign: 'center', fontSize: 20 }}>Game ended</Text>
-    <Text style={{ textAlign: 'center', fontSize: 20 }}>Your score is {getscore}</Text>   
-      <Button title="Finish" onPress={Finish} />
-    <Button title="Play Again" onPress={PlayAgain} /> 
-    </View>
-  );
-  const gameView = (
-   <View style={styles.cbody}>     
-        <Text style={styles.textcontainer}>{getsolution}</Text>
-        <Text style={styles.textcontainer}>{getresult}</Text>
-        <Text style={styles.textcontainer}>Hint: {gethint1}</Text>
-        <Text style={styles.textcontainer}>Score: {getscore}</Text>
-        <Text style={styles.textcontainer}>Turn: {getturn}</Text>
-      
-      <View style={styles.viewcontainer}>
-        <View style={{width:50}}><Button  title="C" onPress={ onClick.bind(this,'reset')}/></View>
-        <View style={{width:50}}><Button  title="CE" onPress={ onClick.bind(this,'CE')}/></View>
-      </View>
 
-      <View style={styles.viewcontainer}>
-        <View style={styles.buttoncontainer}><Button  title="1" onPress={ onClick.bind(this,'1')}/></View>
-        <View style={styles.buttoncontainer}><Button  title="2" onPress={onClick.bind(this,'2')}/></View>
-        <View style={styles.buttoncontainer}><Button  title="3" onPress={onClick.bind(this,'3')}/></View>
-      </View>
+}
+//////////////////////////////////////COUNTRIES SCREEN//////////////////////////////////////////
+function Searching({ navigation,route }) {
+  const [getData,setData]=useState('')
+  const [getCountry,setCountry]=useState('Search Result')
+  const [getlist,setlist]=useState([]);
+  const [getdataSource, setdataSource] = useState(null);
+  const [gl,sl]=useState([]);  
+   
+     useEffect(() => {
+    // When returning from History Screen Update state
+    if (route.params?.getListofFav) {
+      setlist(route.params.getListofFav);
+      // Reste Parameters
+      navigation.setParams({ getListofFav: undefined });
+    }
+  });
+
+ useEffect(() => {
+    getTotalData();  
+  }, []);
+ 
+const getTotalData = () => {
+    return fetch("https://world-population.p.rapidapi.com/allcountriesname", {
+        "method": "GET",
+        "headers": {
+          "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
+          "x-rapidapi-host": "world-population.p.rapidapi.com"
+        }
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setdataSource(responseJson.body.countries);
+        setlist(responseJson.body.countries)
+      })
+      .catch((err) => {
+        console.error(err);    
+      });
+  };
+  const search=()=>{
+    getlist.filter(item => item === getData ? setCountry(getData) : console.log('Not found') )
+  }
+  const onPressAdd=()=>{
+        sl([
+          ...gl,
+          {key: Math.random().toString(),data:getData}
+          ])             
+   setData('')  
+ 
+   }
+  
+  return (
+    <View style={styles.maindiv}>
+     <Button
+          title="Back"
+          onPress={() => navigation.navigate('Home')}
+        />      
+        <TouchableOpacity style={styles.h1o}>
+            <Text style={styles.h1}>Search Countries</Text>
+        </TouchableOpacity>
+       
+    <View style={{justifyContent:"space-between",flexDirection:"row",paddingTop:20}}>   
+      <TextInput 
+      style={styles.textinput}
+      placeholder="Enter Country"
+      onChangeText={text => setData(text)}
+      value={getData}
+      onPress={() => navigation.navigate('Statistics',{countryname:gl})}
+      />
       
-      <View style={styles.viewcontainer}>
-        <View style={styles.buttoncontainer}><Button  title="4" onPress={onClick.bind(this,'4')}/></View>  
-        <View style={styles.buttoncontainer}><Button  title="5" onPress={onClick.bind(this,'5')}/></View>
-        <View style={styles.buttoncontainer}><Button title="6" onPress={onClick.bind(this,'6')}/></View>
-      </View>
-      
-      <View style={styles.viewcontainer}>
-        <View style={styles.buttoncontainer}><Button  title="7" onPress={onClick.bind(this,'7')}/></View>
-        <View style={styles.buttoncontainer}><Button  title="8" onPress={onClick.bind(this,'8')}/></View>
-        <View style={styles.buttoncontainer}><Button  title="9" onPress={onClick.bind(this,'9')}/></View>
-      </View>
-      
-      <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-          <View style={styles.buttoncontainer}><Button  title="0" onPress={onClick.bind(this,'0')}/></View>
-          <View style={styles.buttoncontainer}><Button  title="h" onPress={hint1}/></View>
-          <View style={styles.buttoncontainer}><Button  title="=" onPress={onClick.bind(this,'=')}/></View>
-      </View>
+      <TouchableOpacity onPress={search}>
+            <Text style={styles.texstyles}> Search </Text>
+      </TouchableOpacity>
     </View>
-       );
+    
+    <View style={{justifyContent:"space-between",flexDirection:"row",paddingTop:10,}}>
+    
+        <TouchableOpacity onPress={() => navigation.navigate('Statistics',{countryname:getData})}>
+              <Text style={styles.dataText}>{getCountry}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{textAlign:'center'}} onPress={onPressAdd}>
+              <Text style={styles.texstyles}>Favorite</Text>
+        </TouchableOpacity> 
+     </View>
+     <Button
+          title="Favorites"
+          onPress={() => navigation.navigate('Favorites',{countryname:gl})}
+        />         
+  </View>
+  );
+}
+
+/////////////////////////////////Favorite////////////////////////////////////////////////
+function Favorites({navigation,route}){
+  const [getList,setList]=useState(route.params.countryname);
+
+  const deleteitem=(itemkey)=>{
+    setList(list => getList.filter(item=>item.key!=itemkey));
+  }
 
   return (
-    <View style={styles.container}>
-      {getNum === GAME_START_MESSAGE ? message : getturn<5 ? gameView: end }
-    </View>
-  );  
+  <View style={styles.container}>
+  <Button title="Back to searching" onPress={() => navigation.navigate('Searching',{getListofFav:getList})}/>            
+    <DataTable>
+      <DataTable.Header style={styles.header}>
+        <DataTable.Title style={{flex:1}}>SR</DataTable.Title>
+        <DataTable.Title style={{flex:4}}>Orginal Price</DataTable.Title>
+        <DataTable.Title style={{flex:3}}>Delete</DataTable.Title>
+        <DataTable.Title style={{flex:3}}>Navigate</DataTable.Title>
+      </DataTable.Header>
+  {getList.map((item,index)=>  
+      <DataTable.Row  style={styles.table}>
+        <DataTable.Cell style={{fkex:1}}>{index+1}</DataTable.Cell>
+        <DataTable.Cell style={{flex: 4}}>{item.data}</DataTable.Cell>
+        <DataTable.Cell style={{flex: 3}}>
+        <TouchableOpacity onPress={()=>deleteitem(item.key)}>
+          <View style={styles.smallview}> 
+              <Text style={styles.smalltext}>X</Text>                   
+          </View>
+        </TouchableOpacity>
+      
+        </DataTable.Cell>
+        <DataTable.Cell style={{flex:3}}><Button title='See stats' onPress={() => navigation.navigate('Statistics',{countryname:item.data})}/></DataTable.Cell>
+
+      </DataTable.Row>
+      )}
+    </DataTable>
+
+  <TouchableOpacity>
+  <Button title="Back to Home" onPress={() => navigation.navigate('Home')}/>
+  </TouchableOpacity>
+</View>     
+  );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
-    padding: 8,
+///////////////////////////////////Statistics///////////////////////////////////////////////////////////
+function Statistics({navigation,route}){
+  const [getcd,setcd]=useState(null)
+  const [getcp,setcp]=useState(null)
+  const name=route.params.countryname
+  
+   useEffect(() => {
+    getTotalData();
+     
+  }, []);
+   useEffect(() => {
+    getPopofCountry();
+     
+  }, []);
+
+  const getTotalData = () => {
+    return fetch("https://covid-19-data.p.rapidapi.com/country?name="+name, {
+          "method": "GET",
+          "headers": {
+            "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
+            "x-rapidapi-host": "covid-19-data.p.rapidapi.com"
+          }
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setcd(responseJson);
+        console.log(responseJson)
+      })
+      .catch((err) => {
+        console.error(err);
+        
+      });
+  };
+   const getPopofCountry = () => {
+    return fetch("https://world-population.p.rapidapi.com/population?country_name="+name, {
+          "method": "GET",
+          "headers": {
+            "x-rapidapi-key": "63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0",
+            "x-rapidapi-host": "world-population.p.rapidapi.com"
+          }
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setcp(responseJson.body.population);
+      })
+      .catch((err) => {
+        console.error(err);      
+      });
+  };
+
+  return(
+    <View>
+    
+     <TouchableOpacity style={styles.h1o}>
+     {getcd && <Text style={styles.h1}>{getcd[0].country}</Text>}
+    </TouchableOpacity>
+        <TouchableOpacity style={styles.main}>
+     {getcd && <Text style={styles.text}>Total Population: {getcp}</Text>}
+   </TouchableOpacity> 
+       <TouchableOpacity style={styles.main}>
+     {getcd && <Text style={styles.text}>Confiremd: {parseFloat((getcd[0].confirmed*100/getcp)).toFixed(3)}%</Text>}
+   </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+      {getcd && <Text style={styles.text}>Recovered: {parseFloat((getcd[0].recovered/getcp)*100).toFixed(3)}%</Text>}
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+     {getcd && <Text style={styles.text}>Critical: {parseFloat((getcd[0].critical/getcp)*100).toFixed(7)}%</Text>}
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.main}>
+     {getcd && <Text style={styles.text}>Deaths: {parseFloat((getcd[0].deaths/getcp)*100).toFixed(3)}%</Text>}
+    </TouchableOpacity>
+    <Button onPress={()=>navigation.navigate('Searching')} title="Back"/>
+   </View>
+  )
+}
+
+const Drawer = createDrawerNavigator();
+function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Searching" component={Searching} />
+        <Drawer.Screen name="Favorites" component={Favorites} />
+          <Drawer.Screen name="Statistics" component={Statistics} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
+
+
+const styles=StyleSheet.create({
+  text:{
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    fontSize:20,
+    paddingRight:55,
+    padding:17,
+    borderRadius:10,
   },
-  cbody:{
-  borderRadius:1,
-  borderColor:"black",
-  alignItems:"center",
+  dataText:{
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius:10,
+    fontSize:20,
+    width: '170%',
+    paddingBottom:10,
   },
-  textcontainer:{
-  padding:15,
-      textAlign:"center",
-      fontSize:20,
+  maindiv:{
+    backgroundColor:"#D4DCA9",
+    textAlign:'center',
+    borderWidth:2,
+    borderRadius:10,
+    paddingTop:80,
+    paddingLeft:20,
+    paddingRight:20,
+    paddingBottom:20,
+    flex:1,
   },
-  buttoncontainer:{
-    width:33
+   main:{
+    backgroundColor:"#D4DCA9",
+    borderRadius:10,
   },
-  viewcontainer:{
-    flexDirection:"row", 
-    justifyContent:"space-between",
+  h1:{
+    fontSize: 35,
+    textAlign:'center',
+    borderWidth: 6,
+    borderColor:'#D4DCA9',
+    color:'white',
+    fontWeight:'bold',
+    borderRadius:10,
   },
-    heading: {
-    fontSize: 20,
-    textAlign: 'center',
+  h1o:{
+    backgroundColor:'#336699',
+    padding:17,
+    borderRadius:10,
+  
   },
-});
+  textinput:{
+    borderWidth:2,
+    borderRadius:15,
+    width:'75%',
+  },
+  texstyles:{
+    backgroundColor:"#2F2FA2",
+    borderRadius:15,
+    padding:10,
+    justifyContent:"center",
+    alignItems:"center",
+    color:"white",
+    fontWeight:"bold",
+  },
+   table:{
+    backgroundColor:"orange",
+    paddingBottom:5,
+  },
+  header:{
+    backgroundColor: "lightgreen",
+    fontWeight:"bold",
+    color:"white",
+  },
+})
+export default App;
