@@ -55,11 +55,7 @@ function HomeScreen({ navigation }) {
         console.error(err);    
       });
   };
-  const counter = ()=>{
-  for(var i=0;i<getTotalPop;i++){
-    setTotalPop(i)
-  }
-}
+
   return (
     <View style={styles.maindiv}>
     
