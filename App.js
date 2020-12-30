@@ -399,17 +399,19 @@ function Favorites({ navigation, route }) {
     ),
   });
  
-    const loadData = async () => {
+  const loadData = async () => {
     try {
-      const keys = await AsyncStorage.getAllKeys();
-      for (var i = 0; i < keys.length; i++) {
-        var key = await AsyncStorage.getItem(keys[i]);
+      const getALLkeys = await AsyncStorage.getAllKeys();
+      for (var i = 0; i < getALLkeys.length; i++) {
+        var key = await AsyncStorage.getItem(getALLkeys[i]);
         const data = JSON.parse(key).value;
-        if (value !== null) {
-          list.push(data+'\n');
+        if (key !== null) {
+          array.push(data+'\n');
+          //SORTING AS SIR HAS SAID
+          array.sort()
         }
       }
-      setList(list);
+      setList(array);
     } catch (e) {
       console.error(e);
     }
