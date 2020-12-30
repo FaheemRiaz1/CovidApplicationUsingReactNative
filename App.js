@@ -309,15 +309,6 @@ const Countries = ({ navigation, route }) => {
   const [getdataSource, setdataSource] = useState(null);
 
   useEffect(() => {
-    // When returning from History Screen Update state
-    if (route.params?.getListofFav) {
-      setlist(route.params.getListofFav);
-      // Reste Parameters
-      navigation.setParams({ getListofFav: undefined });
-    }
-  });
-
-  useEffect(() => {
     getTotalData();
   }, []);
 
@@ -412,8 +403,8 @@ function Favorites({ navigation, route }) {
     try {
       const keys = await AsyncStorage.getAllKeys();
       for (var i = 0; i < keys.length; i++) {
-        var value = await AsyncStorage.getItem(keys[i]);
-        const data = JSON.parse(value).value;
+        var key = await AsyncStorage.getItem(keys[i]);
+        const data = JSON.parse(key).value;
         if (value !== null) {
           list.push(data+'\n');
         }
@@ -424,18 +415,19 @@ function Favorites({ navigation, route }) {
     }
   };
 
-  const deleteToken = async (itemkey) => {
+ const loaddata = async () => {
     try {
       const keys = await AsyncStorage.getAllKeys();
       for (var i = 0; i < keys.length; i++) {
-        var value = await AsyncStorage.getItem(keys[i]);
-        const data = JSON.parse(value).value;
-        if (value !== itemkey) {
-          list.pop();
-          list.push(data+'\n')
+        var key = await AsyncStorage.getItem(keys[i]);
+        const data = JSON.parse(key).value;
+        if (key !== null) {
+          array.push(data+'\n');
+          //SORTING AS SIR HAS SAID
+          array.sort()
         }
       }
-      setList(list);
+      setList(array);
     } catch (e) {
       console.error(e);
     }
@@ -455,7 +447,7 @@ function Favorites({ navigation, route }) {
              
     </TouchableOpacity>
       ))}
-      <Button title="Load" onPress={loadData}/>
+      <Button title="Load" onPress={loaddata}/>
     </View>
 
   );
