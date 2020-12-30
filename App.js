@@ -215,13 +215,8 @@ const HomeScreen = ({ navigation }) => {
     getDataofWorld();
   }, []);
   const getDataofWorld = () => {
-    return fetch('https://world-population.p.rapidapi.com/worldpopulation', {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0',
-        'x-rapidapi-host': 'world-population.p.rapidapi.com',
-      },
-    })
+    return fetch(//ENTER YOU API KEY HERE
+    )
       .then((response) => response.json())
       .then((responseJson) => {
         setTotalPop(responseJson.body.world_population);
@@ -232,13 +227,8 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const getTotalData = () => {
-    return fetch('https://covid-19-data.p.rapidapi.com/totals', {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '732a2643d3mshf3d16ace3a873aap16b12ajsn3c1d74acfcff',
-        'x-rapidapi-host': 'covid-19-data.p.rapidapi.com',
-      },
-    })
+    return fetch(//ENTER YOU API KEY HERE
+    )
       .then((response) => response.json())
       .then((responseJson) => {
         setdataSource(responseJson);
@@ -332,18 +322,8 @@ const Countries = ({ navigation, route }) => {
   }, []);
 
   const getTotalData = () => {
-    return fetch('https://world-population.p.rapidapi.com/allcountriesname', {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0',
-        'x-rapidapi-host': 'world-population.p.rapidapi.com',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        setdataSource(responseJson.body.countries);
-        setlist(responseJson.body.countries);
-      })
+    return fetch(//ENTER YOU API KEY HERE
+      )
       .catch((err) => {
         console.error(err);
       });
@@ -412,14 +392,13 @@ const Countries = ({ navigation, route }) => {
   );
 };
 
-/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////FAVORITES///////////////////////////////////////////////
 function Favorites({ navigation, route }) {
   const [getList, setList] = useState([]);
   const [getData, setData] = useState();
+  const list=[];
 
-  const deleteitem = (itemkey) => {
-    setList((list) => getList.filter((item) => item.key != itemkey));
-  };
+
  navigation.setOptions({
     headerRight: () => (
       <Button
@@ -428,40 +407,55 @@ function Favorites({ navigation, route }) {
       />
     ),
   });
-  const loaddata = async (val) => {
-    console.log('Loading');
-    var keys = await AsyncStorage.getAllKeys();
-    console.log('keys are ' + keys);
-    for (var i = 0; keys.length; i++) {
-      var value = await AsyncStorage.getItem(keys[i])
-      if (value != null) {
-        console.log('loading');
-        setList(JSON.parse(value).value);
-        console.log(value)
-        console.log('Done with loading');
+ 
+    const loadData = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      for (var i = 0; i < keys.length; i++) {
+        var value = await AsyncStorage.getItem(keys[i]);
+        const data = JSON.parse(value).value;
+        if (value !== null) {
+          list.push(data+'\n');
+        }
       }
+      setList(list);
+    } catch (e) {
+      console.error(e);
     }
   };
+
   const deleteToken = async (itemkey) => {
     try {
-      const value = await AsyncStorage.removeItem('@storage_key');
-      if (value != null) {
-        console.log('deleting');
-        setList(value);
-        JSON.parse(getList);
+      const keys = await AsyncStorage.getAllKeys();
+      for (var i = 0; i < keys.length; i++) {
+        var value = await AsyncStorage.getItem(keys[i]);
+        const data = JSON.parse(value).value;
+        if (value !== itemkey) {
+          list.pop();
+          list.push(data+'\n')
+        }
       }
-    } catch (err) {
-      console.log(`The error is: ${err}`);
+      setList(list);
+    } catch (e) {
+      console.error(e);
     }
   };
+    
   return (
     <View style={styles.container}>
-     <TouchableOpacity   onPress={() =>
-            navigation.navigate('Statistics', { countryname: getData })}>
-      <Text style={styles.text}>{getList}</Text>
-      </TouchableOpacity>
-      <Button title="Laod" onPress={loaddata}/>
-      <Button title="Delete" onPress={deleteToken}/>
+      {getList.map((item, index) => (
+     
+     <TouchableOpacity onPress={()=>navigation.navigate('Statistics', { countryname: item })}>
+      <Text style={styles.text}>{item}</Text>
+       <TouchableOpacity  onPress={()=>deleteToken(item.key)}>
+                <View style={styles.smallview}> 
+                     <Button title="Delete" onPress={()=>deleteToken(item.key)}/>
+                </View>
+    </TouchableOpacity>
+             
+    </TouchableOpacity>
+      ))}
+      <Button title="Load" onPress={loadData}/>
     </View>
 
   );
@@ -480,13 +474,8 @@ function Statistics({ navigation, route }) {
   }, []);
 
   const getTotalData = () => {
-    return fetch('https://covid-19-data.p.rapidapi.com/country?name=' + name, {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': '63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0',
-        'x-rapidapi-host': 'covid-19-data.p.rapidapi.com',
-      },
-    })
+    return fetch(//ENTER YOUR API KEY HERE
+    )
       .then((response) => response.json())
       .then((responseJson) => {
         setcd(responseJson);
@@ -497,17 +486,8 @@ function Statistics({ navigation, route }) {
       });
   };
   const getPopofCountry = () => {
-    return fetch(
-      'https://world-population.p.rapidapi.com/population?country_name=' + name,
-      {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key':
-            '63b978786amsh7dd8c3db33bf96fp1e4b92jsncfe61f57edc0',
-          'x-rapidapi-host': 'world-population.p.rapidapi.com',
-        },
-      }
-    )
+    return fetch(//ENTER YOUR API KEY HERE
+      )
       .then((response) => response.json())
       .then((responseJson) => {
         setcp(responseJson.body.population);
